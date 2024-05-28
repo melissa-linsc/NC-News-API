@@ -84,6 +84,38 @@ describe('GET: /api/articles/:article_id', () => {
     });
 });
 
+describe('GET: /api/articles', () => {
+    test('should return an array of articles with the correct properties, comment count and 200 status', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+                expect(article.body).toBe(undefined)
+            })
+            expect(body.articles).toHaveLength(13)
+        })
+    });
+    test('should be sorted by date, descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

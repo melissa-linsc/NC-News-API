@@ -4,7 +4,7 @@ const request = require('supertest')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index.js')
 
-const app = require('../app')
+const {app, countEndpoints} = require('../app')
 
 beforeEach(() => seed(testData))
 
@@ -23,6 +23,25 @@ describe('GET: /api/topics', () => {
                 })
             })
             expect(body.topics).toHaveLength(3)
+        })
+    });
+});
+
+describe('GET /api', () => {
+    test('should return an object with the current endpoint data, including a description, queries, example response and format for the request body', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(Object.values(body.endpoints)).toHaveLength(countEndpoints())
+            Object.values(body.endpoints).forEach((endpoint) => {
+                expect(endpoint).toMatchObject({
+                    description: expect.any(String),
+                    queries: expect.any(Array),
+                    exampleResponse: expect.any(Object),
+                    requestBody: expect.any(Object)
+                })
+            })
         })
     });
 });

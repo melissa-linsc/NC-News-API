@@ -25,6 +25,9 @@ describe('GET: /api/topics', () => {
             expect(body.topics).toHaveLength(3)
         })
     });
+});
+
+describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)
         .get('/api/topic')

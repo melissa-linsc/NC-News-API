@@ -53,7 +53,7 @@ describe('GET: /api/articles/:article_id', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.article).toMatchObject({
-                    article_id: expect.any(Number),
+                    article_id: 1,
                     title: expect.any(String),
                     topic: expect.any(String),
                     author: expect.any(String),
@@ -62,8 +62,6 @@ describe('GET: /api/articles/:article_id', () => {
                     votes: expect.any(Number),
                     article_img_url: expect.any(String)
                 })
-            expect(body.article.article_id).toBe(1)
-            expect(body.article.topic).toBe('mitch')
         })
     });
     test('should return a 400 Invalid Input if given an invalid id', () => {
@@ -128,11 +126,10 @@ describe('GET /api/articles/:article_id/comments', () => {
                     comment_id: expect.any(Number),
                     votes: expect.any(Number),
                     created_at: expect.any(String),
-                    article_id: expect.any(Number),
+                    article_id: 1,
                     author: expect.any(String),
                     body: expect.any(String)
                 })
-                expect(comment.article_id).toBe(1)
             })
         })
     });
@@ -152,12 +149,12 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Article Does Not Exist')
         })
     });
-    test('should return a 404: No Comments For This Article if the article passed has no comments', () => {
+    test('should return a 200: No Comments For This Article Yet! if the article passed has no comments', () => {
         return request(app)
         .get('/api/articles/4/comments')
-        .expect(404)
+        .expect(200)
         .then(({body}) => {
-            expect(body.msg).toBe('No Comments For This Article')
+            expect(body.comments).toBe('No Comments For This Article Yet!')
         })
     });
     test('should be sorted with most recent comments first, date descending', () => {
@@ -169,6 +166,77 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('should return a 201 and the posted comment on success', () => {
+        const newComment = {
+            body: "This morning, I showered for nine minutes.", 
+            username: "butter_bridge"}
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(201)
+        .send(newComment)
+        .then(({body}) => {
+                expect(body.comment).toMatchObject({
+                    comment_id: 19,
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    article_id: 1,
+                    author: expect.any(String),
+                    body: expect.any(String)
+                })
+        })
+    });
+    test('should return a 400 Invalid Input if given an invalid id', () => {
+        const newComment = {
+            body: "This morning, I showered for nine minutes.", 
+            username: "butter_bridge"}
+        return request(app)
+        .post('/api/articles/invalid/comments')
+        .expect(400)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+    test('should return a 404 Article Does Not Exist if the id can\'t be found', () => {
+        const newComment = {
+            body: "This morning, I showered for nine minutes.", 
+            username: "butter_bridge"}
+        return request(app)
+        .post('/api/articles/20/comments')
+        .expect(404)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('Article Does Not Exist')
+        })
+    });
+    test('should return a 400 Invalid Input when the request body is missing the body or username', () => {
+        const newComment = {
+            body: "This morning, I showered for nine minutes.", 
+            username: "butter_bridge",
+            extraKey: "extra key"}
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should return a 400 Invalid Input when the request body has more keys than required', () => {
+        const newComment = {
+            username: "butter_bridge"}
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+});
+
 
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {

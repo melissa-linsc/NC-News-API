@@ -71,7 +71,7 @@ describe('GET: /api/articles/:article_id', () => {
         .get('/api/articles/invalid')
         .expect(400)
         .then(({body}) => {
-            expect(body.msg).toBe('Bad Request')
+            expect(body.msg).toBe('Invalid Input')
         })
     });
     test('should return a 404 Not Found if the id can\'t be found', () => {
@@ -79,7 +79,7 @@ describe('GET: /api/articles/:article_id', () => {
         .get('/api/articles/20')
         .expect(404)
         .then(({body}) => {
-            expect(body.msg).toBe('Not Found')
+            expect(body.msg).toBe('Article Does Not Exist')
         })
     });
 });

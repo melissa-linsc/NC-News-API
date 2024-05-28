@@ -7,7 +7,7 @@ const selectArticleById = (id) => {
             return res.rows[0]
         }
         else {
-            return Promise.reject({status: 404, msg: 'Not Found'})
+            return Promise.reject({status: 404, msg: 'Article Does Not Exist'})
         }
     })
 }

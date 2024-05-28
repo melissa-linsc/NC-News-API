@@ -30,4 +30,25 @@ const selectArticles = () => {
     })
 }
 
-module.exports = {selectArticleById, selectArticles}
+const selectCommentsByArticleId = (id) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
+    .then((article) => {
+        if (article.rows.length) {
+            return db.query(`SELECT * FROM comments WHERE article_id = $1
+            ORDER BY created_at DESC`, [id]) 
+        }
+        else {
+            return Promise.reject({status: 404, msg: 'Article Does Not Exist'})
+        }
+    })
+    .then((comments) => {
+        if (comments.rows.length) {
+            return comments.rows
+        }
+        else {
+            return Promise.reject({status: 404, msg: 'No Comments For This Article'})
+        }
+    })
+}
+
+module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId}

@@ -28,7 +28,7 @@ describe('GET: /api/topics', () => {
 });
 
 describe('GET /api', () => {
-    test('should return an object with the current endpoint data, including a description, queries, example response and format for the request body', () => {
+    test('should return an object with the current endpoint data, including a description, queries, example response and format for the request body and 200 status', () => {
         return request(app)
         .get('/api')
         .expect(200)
@@ -46,6 +46,44 @@ describe('GET /api', () => {
     });
 });
 
+describe('GET: /api/articles/:article_id', () => {
+    test('should return the article by id with the correct properties and 200 status', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String)
+                })
+            expect(body.article.article_id).toBe(1)
+            expect(body.article.topic).toBe('mitch')
+        })
+    });
+    test('should return a 400 Bad Request if given an invalid id', () => {
+        return request(app)
+        .get('/api/articles/invalid')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 404 Not Found if the id can\'t be found', () => {
+        return request(app)
+        .get('/api/articles/20')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)
@@ -53,3 +91,4 @@ describe('All Endpoints', () => {
         .expect(404)
     });
 });
+

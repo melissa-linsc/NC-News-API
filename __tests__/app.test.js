@@ -71,7 +71,7 @@ describe('GET: /api/articles/:article_id', () => {
         .get('/api/articles/invalid')
         .expect(400)
         .then(({body}) => {
-            expect(body.msg).toBe('Bad Request')
+            expect(body.msg).toBe('Invalid Input')
         })
     });
     test('should return a 404 Not Found if the id can\'t be found', () => {
@@ -79,7 +79,39 @@ describe('GET: /api/articles/:article_id', () => {
         .get('/api/articles/20')
         .expect(404)
         .then(({body}) => {
-            expect(body.msg).toBe('Not Found')
+            expect(body.msg).toBe('Article Does Not Exist')
+        })
+    });
+});
+
+describe('GET: /api/articles', () => {
+    test('should return an array of articles with the correct properties, comment count and 200 status', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+                expect(article.body).toBe(undefined)
+            })
+            expect(body.articles).toHaveLength(13)
+        })
+    });
+    test('should be sorted by date, descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
         })
     });
 });

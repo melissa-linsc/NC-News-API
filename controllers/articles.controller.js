@@ -22,12 +22,7 @@ const getArticles = (req,res,next) => {
 const getCommentsByArticleId = (req,res,next) => {
     const articleId = req.params.article_id
     selectCommentsByArticleId(articleId).then((comments) => {
-        if (comments.length) {
-            res.status(200).send({comments})
-        }
-        else {
-            res.status(200).send({comments: "No Comments For This Article Yet!"})
-        }
+        res.status(200).send({comments})
     })
     .catch(next)
 }

@@ -149,12 +149,12 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Article Does Not Exist')
         })
     });
-    test('should return a 200: No Comments For This Article Yet! if the article passed has no comments', () => {
+    test('should return a 200 and empty array if the article passed has no comments', () => {
         return request(app)
         .get('/api/articles/4/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body.comments).toBe('No Comments For This Article Yet!')
+            expect(body.comments).toEqual([])
         })
     });
     test('should be sorted with most recent comments first, date descending', () => {
@@ -211,7 +211,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Article Does Not Exist')
         })
     });
-    test('should return a 400 Invalid Input when the request body is missing the body or username', () => {
+    test('should return a 400 Invalid Request Body when the request body is missing the body or username', () => {
         const newComment = {
             body: "This morning, I showered for nine minutes.", 
             username: "butter_bridge",
@@ -224,7 +224,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Invalid Request Body')
         })
     });
-    test('should return a 400 Invalid Input when the request body has more keys than required', () => {
+    test('should return a 400 Invalid Request Body when the request body has more keys than required', () => {
         const newComment = {
             username: "butter_bridge"}
         return request(app)

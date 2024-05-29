@@ -403,6 +403,24 @@ describe('DELETE /api/comments/:comment_id', () => {
     });
 });
 
+describe('GET /api/users', () => {
+    test('should return 200 and an array of all users with their username, name and avatar url', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            body.users.forEach((user) => {
+                expect(user).toMatchObject({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+            })
+            expect(body.users).toHaveLength(4)
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

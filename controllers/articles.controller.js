@@ -31,20 +31,14 @@ const getCommentsByArticleId = (req,res,next) => {
 
 const postCommentsByArticleId = (req,res,next) => {
 
-    const requiredKeys = ['body', 'username']
-
-    for (const key in req.body) {
-        if (!requiredKeys.includes(key)) {
-            delete req.body[key]
-        }
-    }
-
     const articleId = req.params.article_id
-    const newComment = req.body
 
+    const newComment = {}
+
+    newComment.body = req.body.body
     newComment.votes = 0
     newComment.article_id = articleId
-    newComment.author = newComment.username
+    newComment.author = req.body.username
     delete newComment.username
     const newCommentValues = Object.values(newComment)
     insertCommentByArticleId(articleId, [newCommentValues], newComment).then((comment) => {

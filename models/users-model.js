@@ -8,4 +8,10 @@ const checkUserExists = (user) => {
     })
 }
 
-module.exports = checkUserExists
+const selectUsers = () => {
+    return db.query('SELECT * FROM users').then((res) => {
+        return res.rows
+    })
+}
+
+module.exports = {checkUserExists, selectUsers}

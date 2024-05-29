@@ -1,6 +1,6 @@
 const format = require("pg-format");
 const db = require("../db/connection");
-const checkUserExists = require('../models/users-model')
+const {checkUserExists} = require('../models/users-model')
 
 const selectArticleById = (id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [id]).then((res) => {

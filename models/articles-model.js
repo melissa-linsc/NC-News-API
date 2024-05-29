@@ -65,7 +65,29 @@ const insertCommentByArticleId = (id, values) => {
     })
 }
 
+const updateArticle = (id, newVotes) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
+    .then((article) => {
+        if (article.rows.length) {
+            return db.query(
+               `UPDATE articles  
+                SET votes = votes + $1
+                WHERE article_id = $2
+                RETURNING *`, [newVotes, id])
+        }
+        else {
+            return Promise.reject({status: 404, msg: 'Article Does Not Exist'})
+        }
+    })
+    .then((res) => {
+        return res.rows[0]
+    })
+}
 
-module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId,
-insertCommentByArticleId
+
+module.exports = {
+    selectArticleById,
+    selectArticles, selectCommentsByArticleId,
+    insertCommentByArticleId,
+    updateArticle
 }

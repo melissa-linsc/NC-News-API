@@ -237,6 +237,111 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
 });
 
+describe('PATCH /api/articles/:article_id', () => {
+    test('should update the article votes with an increase in votes by id and return the updated article', () => {
+        const newVotes = { inc_votes: 10 }
+        return request(app)
+        .patch('/api/articles/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedArticle).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T19:11:00.000Z",
+                votes: 110,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    });
+    test('should update the article votes with a decrease in votes by id and return the updated article', () => {
+        const newVotes = { inc_votes: -20 }
+        return request(app)
+        .patch('/api/articles/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedArticle).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T19:11:00.000Z",
+                votes: 80,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    });
+    test('should update the article votes to 0 if the decrease is larger than the amount of votes and return the updated article', () => {
+        const newVotes = { inc_votes: -200 }
+        return request(app)
+        .patch('/api/articles/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedArticle).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T19:11:00.000Z",
+                votes: 0,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    });
+    test('should return a 400 Invalid Input if given an invalid id', () => {
+        const newVotes = { inc_votes: 30 }
+        return request(app)
+        .patch('/api/articles/invalid')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+    test('should return a 404 Article Does Not Exist if the id can\'t be found', () => {
+        const newVotes = { inc_votes: 30 }
+        return request(app)
+        .patch('/api/articles/20')
+        .expect(404)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Article Does Not Exist')
+        })
+    });
+    test('should return a 400 Invalid Request Body when the request body is missing the inc_votes', () => {
+        const newVotes = { votes: 30 }
+        return request(app)
+        .patch('/api/articles/1')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should return a 400 Invalid Request Body when the request body has more keys than required', () => {
+        const newVotes = {inc_votes: 30,
+            extrakey: "extraKey"
+         }
+        return request(app)
+        .patch('/api/articles/1')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+})
+
 
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {

@@ -328,26 +328,6 @@ describe('PATCH /api/articles/:article_id', () => {
               })
         })
     });
-    test('should update the article votes to 0 if the decrease is larger than the amount of votes and return the updated article', () => {
-        const newVotes = { inc_votes: -200 }
-        return request(app)
-        .patch('/api/articles/1')
-        .expect(200)
-        .send(newVotes)
-        .then(({body}) => {
-            expect(body.updatedArticle).toEqual({
-                article_id: 1,
-                title: "Living in the shadow of a great man",
-                topic: "mitch",
-                author: "butter_bridge",
-                body: "I find this existence challenging",
-                created_at: "2020-07-09T19:11:00.000Z",
-                votes: 0,
-                article_img_url:
-                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-              })
-        })
-    });
     test('should return a 400 Invalid Input if given an invalid id', () => {
         const newVotes = { inc_votes: 30 }
         return request(app)

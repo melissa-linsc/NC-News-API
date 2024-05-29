@@ -58,9 +58,6 @@ const patchArticle = (req,res,next) => {
     const updatedVotes =requestBody.inc_votes
     
     updateArticle(articleId, updatedVotes, requestBody).then((article) => {
-        if (article.votes < 0) {
-            article.votes = 0
-        }
         res.status(200).send({updatedArticle: article})
     })
     .catch(next)

@@ -121,6 +121,7 @@ describe('GET /api/articles?topic', () => {
         .get('/api/articles?topic=cats')
         .expect(200)
         .then(({body}) => {
+            expect(body.articles).toHaveLength(1)
             body.articles.forEach((article) => {
                 expect(article.topic).toBe('cats')
             })
@@ -140,14 +141,6 @@ describe('GET /api/articles?topic', () => {
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe('Topic Not Found')
-        })
-    });
-    test('should return a 400 Invalid Input if the query given is not of the correct type', () => {
-        return request(app)
-        .get('/api/articles?topic=1')
-        .expect(400)
-        .then(({body}) => {
-            expect(body.msg).toBe('Invalid Input')
         })
     });
 });

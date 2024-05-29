@@ -1,5 +1,6 @@
 const format = require("pg-format");
 const db = require("../db/connection");
+const checkUserExists = require('../models/users-model')
 
 const selectArticleById = (id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [id]).then((res) => {
@@ -46,9 +47,17 @@ const selectCommentsByArticleId = (id) => {
     })
 }
 
-const insertCommentByArticleId = (id, values) => {
-    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
-    .then((article) => {
+const insertCommentByArticleId = (id, values, newComment) => {
+    
+    if (!newComment.body || !newComment.author) {
+        return Promise.reject({status:400, msg: 'Invalid Request Body'})
+    }
+    
+    const articlesAndUsers = [db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]), checkUserExists(newComment.author)]
+
+    return Promise.all(articlesAndUsers)
+    .then(([article, users]) => {
+ 
         if (article.rows.length) {
             return db.query(
                 format( `INSERT INTO comments  
@@ -65,7 +74,34 @@ const insertCommentByArticleId = (id, values) => {
     })
 }
 
+const updateArticle = (id, newVotes, requestBody) => {
+    
+    if (!requestBody.inc_votes) {
+        return Promise.reject({status:400, msg: 'Invalid Request Body'})
+    }
 
-module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId,
-insertCommentByArticleId
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
+    .then((article) => {
+        if (article.rows.length) {
+            return db.query(
+               `UPDATE articles  
+                SET votes = votes + $1
+                WHERE article_id = $2
+                RETURNING *`, [newVotes, id])
+        }
+        else {
+            return Promise.reject({status: 404, msg: 'Article Does Not Exist'})
+        }
+    })
+    .then((res) => {
+        return res.rows[0]
+    })
+}
+
+
+module.exports = {
+    selectArticleById,
+    selectArticles, selectCommentsByArticleId,
+    insertCommentByArticleId,
+    updateArticle
 }

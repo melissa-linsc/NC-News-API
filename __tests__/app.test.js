@@ -182,8 +182,8 @@ describe('POST /api/articles/:article_id/comments', () => {
                     votes: expect.any(Number),
                     created_at: expect.any(String),
                     article_id: 1,
-                    author: expect.any(String),
-                    body: expect.any(String)
+                    author: "butter_bridge",
+                    body: "This morning, I showered for nine minutes."
                 })
         })
     });
@@ -213,9 +213,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
     test('should return a 400 Invalid Request Body when the request body is missing the body or username', () => {
         const newComment = {
-            body: "This morning, I showered for nine minutes.", 
-            username: "butter_bridge",
-            extraKey: "extra key"}
+            username: "butter_bridge"}
         return request(app)
         .post('/api/articles/1/comments')
         .expect(400)
@@ -224,15 +222,16 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Invalid Request Body')
         })
     });
-    test('should return a 400 Invalid Request Body when the request body has more keys than required', () => {
+    test('should return a 404: User Not Found if the username doesn\'t exist', () => {
         const newComment = {
-            username: "butter_bridge"}
+            body: "This morning, I showered for nine minutes.", 
+            username: "butter"}
         return request(app)
-        .post('/api/articles/1/comments')
-        .expect(400)
+        .post('/api/articles/2/comments')
+        .expect(404)
         .send(newComment)
         .then(({body}) => {
-            expect(body.msg).toBe('Invalid Request Body')
+            expect(body.msg).toBe('User Not Found')
         })
     });
 });
@@ -320,18 +319,6 @@ describe('PATCH /api/articles/:article_id', () => {
     });
     test('should return a 400 Invalid Request Body when the request body is missing the inc_votes', () => {
         const newVotes = { votes: 30 }
-        return request(app)
-        .patch('/api/articles/1')
-        .expect(400)
-        .send(newVotes)
-        .then(({body}) => {
-            expect(body.msg).toBe('Invalid Request Body')
-        })
-    });
-    test('should return a 400 Invalid Request Body when the request body has more keys than required', () => {
-        const newVotes = {inc_votes: 30,
-            extrakey: "extraKey"
-         }
         return request(app)
         .patch('/api/articles/1')
         .expect(400)

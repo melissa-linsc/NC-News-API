@@ -34,16 +34,12 @@ const postCommentsByArticleId = (req,res,next) => {
     const articleId = req.params.article_id
     const newComment = req.body
 
-    if (!newComment.body || !newComment.username || Object.keys(newComment).length !==2) {
-        return next({status:400, msg: 'Invalid Request Body'})
-    }
-
     newComment.votes = 0
     newComment.article_id = articleId
     newComment.author = newComment.username
     delete newComment.username
     const newCommentValues = Object.values(newComment)
-    insertCommentByArticleId(articleId, [newCommentValues]).then((comment) => {
+    insertCommentByArticleId(articleId, [newCommentValues], newComment).then((comment) => {
         res.status(201).send({comment})
     })
     .catch(next)   
@@ -53,14 +49,10 @@ const patchArticle = (req,res,next) => {
     const articleId = req.params.article_id
 
     const requestBody = req.body
-
-    if (!requestBody.inc_votes || Object.keys(requestBody).length !== 1) {
-        return next({status:400, msg: 'Invalid Request Body'})
-    }
     
     const updatedVotes =requestBody.inc_votes
     
-    updateArticle(articleId, updatedVotes).then((article) => {
+    updateArticle(articleId, updatedVotes, requestBody).then((article) => {
         if (article.votes < 0) {
             article.votes = 0
         }

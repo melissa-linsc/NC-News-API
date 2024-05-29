@@ -42,13 +42,30 @@ const selectCommentsByArticleId = (id) => {
         }
     })
     .then((comments) => {
-        if (comments.rows.length) {
-            return comments.rows
-        }
-        else {
-            return Promise.reject({status: 404, msg: 'No Comments For This Article'})
-        }
+        return comments.rows
     })
 }
 
-module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId}
+const insertCommentByArticleId = (id, values) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
+    .then((article) => {
+        if (article.rows.length) {
+            return db.query(
+                format( `INSERT INTO comments  
+                (body, votes, article_id, author)
+                VALUES %L
+                RETURNING *`, values))
+        }
+        else {
+            return Promise.reject({status: 404, msg: 'Article Does Not Exist'})
+        }
+    })
+    .then((res) => {
+        return res.rows[0]
+    })
+}
+
+
+module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId,
+insertCommentByArticleId
+}

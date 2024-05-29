@@ -8,6 +8,7 @@ getCommentsByArticleId, postCommentsByArticleId,
 patchArticle
 } = require('./controllers/articles.controller')
 const deleteComment = require('./controllers/comments-controller')
+const getUsers = require('./controllers/users-controller')
 
 const app = express()
 
@@ -28,6 +29,8 @@ app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
 app.patch('/api/articles/:article_id', patchArticle)
 
 app.delete('/api/comments/:comment_id', deleteComment)
+
+app.get('/api/users', getUsers)
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {

@@ -114,6 +114,43 @@ describe('GET: /api/articles', () => {
     });
 });
 
+describe('GET /api/articles?topic', () => {
+    test('topic query should filter for the topic chosen', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article) => {
+                expect(article.topic).toBe('cats')
+            })
+        })
+    });
+    test('should return an empty array if there are no articles for the chosen topic', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toEqual([])
+        })
+    });
+    test('should return a 404 Topic Not Found if the topic is not found', () => {
+        return request(app)
+        .get('/api/articles?topic=sports')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Topic Not Found')
+        })
+    });
+    test('should return a 400 Invalid Input if the query given is not of the correct type', () => {
+        return request(app)
+        .get('/api/articles?topic=1')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+});
+
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return an array of comments for a given article id', () => {
         return request(app)

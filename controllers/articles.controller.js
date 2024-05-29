@@ -15,7 +15,10 @@ const getArticleById = (req,res,next) => {
 }
 
 const getArticles = (req,res,next) => {
-    selectArticles().then((articles) => {
+
+    const topic = req.query.topic
+
+    selectArticles(topic).then((articles) => {
         res.status(200).send({articles})
     })
     .catch(next)

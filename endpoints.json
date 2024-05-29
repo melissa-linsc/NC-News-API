@@ -95,5 +95,11 @@
         "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     },
     "requestBody": {"inc_votes" : 10}
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment by its comment_id",
+    "queries": [],
+    "exampleResponse": {},
+    "requestBody": {}
   }
 }

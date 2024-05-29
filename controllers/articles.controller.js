@@ -31,6 +31,14 @@ const getCommentsByArticleId = (req,res,next) => {
 
 const postCommentsByArticleId = (req,res,next) => {
 
+    const requiredKeys = ['body', 'username']
+
+    for (const key in req.body) {
+        if (!requiredKeys.includes(key)) {
+            delete req.body[key]
+        }
+    }
+
     const articleId = req.params.article_id
     const newComment = req.body
 

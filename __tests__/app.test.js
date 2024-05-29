@@ -60,7 +60,8 @@ describe('GET: /api/articles/:article_id', () => {
                     body: expect.any(String),
                     created_at: expect.any(String),
                     votes: expect.any(Number),
-                    article_img_url: expect.any(String)
+                    article_img_url: expect.any(String),
+                    comment_count: 11
                 })
         })
     });

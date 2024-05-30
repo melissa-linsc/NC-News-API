@@ -926,6 +926,36 @@ describe('POST /api/topics', () => {
     });
 });
 
+describe('DELETE /api/articles/:article_id', () => {
+    test('should delete an article by id and return a 404', () => {
+        return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+    });
+    test('should delete the associated comments', () => {
+        return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+        .then(() => {
+            return db.query('SELECT * FROM comments;')
+        })
+        .then((comments) => {
+            expect(comments.rows).toHaveLength(7)
+            comments.rows.forEach((comment) => {
+                expect(comment.article_id).not.toBe(1)
+            })
+        })
+    });
+    test('should return a 404 Article Not Found if the article does not exist', () => {
+        return request(app)
+        .delete('/api/articles/100')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Article Not Found')
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

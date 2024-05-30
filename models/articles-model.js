@@ -173,11 +173,24 @@ const insertArticle = (values, requestBody) => {
     })
 }
 
+const deleteArticleById = (article_id) =>   { 
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .then((res) => {
+        if (!res.rows.length) {
+            return Promise.reject({status: 404, msg: 'Article Not Found'})
+        }
+    })
+    .then(() => {
+        return db.query(`DELETE FROM articles WHERE article_id = $1`, [article_id])
+    })
+}
+
 
 module.exports = {
     selectArticleById,
     selectArticles, selectCommentsByArticleId,
     insertCommentByArticleId,
     updateArticle,
-    insertArticle
+    insertArticle,
+    deleteArticleById
 }

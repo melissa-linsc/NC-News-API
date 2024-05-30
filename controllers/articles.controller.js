@@ -4,7 +4,8 @@ const {
     selectCommentsByArticleId,
     insertCommentByArticleId,
     updateArticle,
-    insertArticle
+    insertArticle,
+    deleteArticleById
     }= require('../models/articles-model')
 
 const getArticleById = (req,res,next) => {
@@ -101,10 +102,20 @@ const postArticle = (req,res,next) => {
     .catch(next)
 }
 
+const deleteArticle = (req,res,next) => {
+    const articleId = req.params.article_id
+
+    deleteArticleById(articleId).then(() => {
+        res.status(204).send()
+    })
+    .catch(next)
+}
+
 module.exports = {
     getArticleById, 
     getArticles, 
     getCommentsByArticleId, postCommentsByArticleId,
     patchArticle,
-    postArticle
+    postArticle,
+    deleteArticle
 }

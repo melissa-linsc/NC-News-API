@@ -168,5 +168,11 @@
       "slug": "topic name here",
       "description": "description here"
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article and its comments",
+    "queries": [],
+    "exampleResponse": {},
+    "requestBody": {}
   }
 }

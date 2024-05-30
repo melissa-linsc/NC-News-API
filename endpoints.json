@@ -39,7 +39,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles with their comment count",
-    "queries": ["topic"],
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse":{ "articles" : [{
       "article_id": 1,
       "author": "butter_bridge",

@@ -23,7 +23,11 @@ const selectArticleById = (id) => {
     })
 }
 
-const selectArticles = (topic) => {
+const selectArticles = (topic, sortBy = 'created_at', order = 'desc') => {
+
+    const validSortBys = ['article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count']
+
+    const validOrders = ['asc', 'desc']
 
     let sqlQuery = `SELECT 
     articles.article_id, 
@@ -44,8 +48,15 @@ const selectArticles = (topic) => {
         queryParams.push(topic)
     }
 
-    sqlQuery += ` GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
+    sqlQuery += ` GROUP BY articles.article_id` 
 
+    if (validSortBys.includes(sortBy) && validOrders.includes(order)) {
+        sqlQuery += ` ORDER BY articles.${sortBy} ${order};` 
+    }
+    else {
+        return Promise.reject({status: 400, msg: "Invalid Query"})
+    }
+    
     const articlesAndTopics = [db.query(sqlQuery, queryParams), checkTopicExists(topic) ]
 
     return Promise.all(articlesAndTopics)

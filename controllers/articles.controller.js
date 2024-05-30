@@ -20,9 +20,12 @@ const getArticles = (req,res,next) => {
     const topic = req.query.topic
     const sortBy = req.query.sort_by
     const order = req.query.order
+    const limit = req.query.limit
+    const page = req.query.p
 
-    selectArticles(topic, sortBy, order).then((articles) => {
-        res.status(200).send({articles})
+    selectArticles(topic, sortBy, order, limit, page).then((articles) => {
+        const length = articles.length
+        res.status(200).send({articles:  articles, total_count: length})
     })
     .catch(next)
 }

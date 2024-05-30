@@ -108,7 +108,7 @@ describe('GET: /api/articles', () => {
                 })
                 expect(article.body).toBe(undefined)
             })
-            expect(body.articles).toHaveLength(13)
+            expect(body.articles).toHaveLength(10)
         })
     });
     test('should be sorted by date, descending', () => {
@@ -204,6 +204,75 @@ describe('GET /api/articles?order&sort_by', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe('Invalid Query')
+        })
+    });
+});
+
+describe('GET /api/articles?limit', () => {
+    test('should take a limit query and return the limit number of articles', () => {
+        return request(app)
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(5)
+            expect(body.total_count).toBe(5)
+        })
+    });
+    test('should take a limit query and return all the articles if the limit is greater than the number of articles', () => {
+        return request(app)
+        .get('/api/articles?limit=15')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(13)
+            expect(body.total_count).toBe(13)
+        })
+    });
+    test('should return a 400 Invalid Input if the limit is an invalid type', () => {
+        return request(app)
+        .get('/api/articles?limit=banana')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+});
+
+describe('GET /api/articles?p', () => {
+    test('should take a p query and return the correct page of article based on the limit (default 10)', () => {
+        return request(app)
+        .get('/api/articles?p=2&sort_by=article_id&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(3)
+            expect(body.total_count).toBe(3)
+            expect(body.articles[0].article_id).toBe(11)
+        })
+    });
+    test('should take a p query and return the correct page of article based on the limit of 3', () => {
+        return request(app)
+        .get('/api/articles?p=3&limit=3&sort_by=article_id&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(3)
+            expect(body.total_count).toBe(3)
+            expect(body.articles[0].article_id).toBe(7)
+        })
+    });
+    test('should return 400 Invalid Input if the page query if the wrong data type', () => {
+        return request(app)
+        .get('/api/articles?p=banana')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+    test('should take a p query and return an empty array if the page has no articles', () => {
+        return request(app)
+        .get('/api/articles?p=5')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toEqual([])
+            expect(body.total_count).toBe(0)
         })
     });
 });

@@ -23,7 +23,7 @@ const selectArticleById = (id) => {
     })
 }
 
-const selectArticles = (topic, sortBy = 'created_at', order = 'desc') => {
+const selectArticles = (topic, sortBy = 'created_at', order = 'desc', limit = 10, page = 1) => {
 
     const validSortBys = ['article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count']
 
@@ -51,10 +51,21 @@ const selectArticles = (topic, sortBy = 'created_at', order = 'desc') => {
     sqlQuery += ` GROUP BY articles.article_id` 
 
     if (validSortBys.includes(sortBy) && validOrders.includes(order)) {
-        sqlQuery += ` ORDER BY articles.${sortBy} ${order};` 
+        sqlQuery += ` ORDER BY articles.${sortBy} ${order}` 
     }
     else {
         return Promise.reject({status: 400, msg: "Invalid Query"})
+    }
+
+    const offset = (page - 1) * limit
+
+    if (topic) {
+        sqlQuery += ` LIMIT $2 OFFSET $3;`
+        queryParams.push(limit, offset)
+    }
+    else {
+        sqlQuery += ` LIMIT $1 OFFSET $2;`
+        queryParams.push(limit, offset)
     }
     
     const articlesAndTopics = [db.query(sqlQuery, queryParams), checkTopicExists(topic) ]

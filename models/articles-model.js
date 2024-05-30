@@ -132,10 +132,37 @@ const updateArticle = (id, newVotes, requestBody) => {
     })
 }
 
+const insertArticle = (values, requestBody) => {
+    
+    const requiredKeys = ['author', 'title', 'body', 'topic']
+    
+    if (!requiredKeys.every(key => Object.keys(requestBody).includes(key))) {
+        return Promise.reject({status: 400, msg: 'Invalid Request Body'})
+    }
+
+    const topic = requestBody.topic
+    const author = requestBody.author
+
+    const articlesUsersTopics = [
+    selectUserByUsername(author),
+    checkTopicExists(topic),
+    db.query(format( `INSERT INTO articles 
+    (author, title, body, topic, article_img_url, votes)
+    VALUES %L
+    RETURNING *`, values))
+    ]
+
+    return Promise.all(articlesUsersTopics)
+    .then(([user,topics,article]) => {
+        return article.rows[0]
+    })
+}
+
 
 module.exports = {
     selectArticleById,
     selectArticles, selectCommentsByArticleId,
     insertCommentByArticleId,
-    updateArticle
+    updateArticle,
+    insertArticle
 }

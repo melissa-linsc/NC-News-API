@@ -611,6 +611,140 @@ describe('PATCH /api/comments/:comment_id', () => {
     });
 });
 
+describe('POST /api/articles', () => {
+    test('should return a 200 with the new article and correct properties', () => {
+        const newComment = {
+            author: 'lurker',
+            title: 'CATS!!',
+            body: 'I like cats',
+            topic: 'cats',
+            article_img_url: "url"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(200)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.newArticle).toMatchObject({
+                article_id: 14,
+                author: 'lurker',
+                title: 'CATS!!',
+                body: 'I like cats',
+                topic: 'cats',
+                article_img_url: "url",
+                comment_count: 0,
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+    });
+    test('article_img_url should default if not provided', () => {
+        const newComment = {
+            author: 'lurker',
+            title: 'CATS!!',
+            body: 'I like cats',
+            topic: 'cats'
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(200)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.newArticle).toMatchObject({
+                article_id: 14,
+                author: 'lurker',
+                title: 'CATS!!',
+                body: 'I like cats',
+                topic: 'cats',
+                article_img_url: expect.any(String),
+                comment_count: 0,
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+    });
+    test('should return a 200 with the new article and correct properties if extra keys are provided on the request body', () => {
+        const newComment = {
+            author: 'lurker',
+            title: 'CATS!!',
+            body: 'I like cats',
+            topic: 'cats',
+            article_img_url: "url",
+            extraKey: "extraKey"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(200)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.newArticle).toMatchObject({
+                article_id: 14,
+                author: 'lurker',
+                title: 'CATS!!',
+                body: 'I like cats',
+                topic: 'cats',
+                article_img_url: "url",
+                comment_count: 0,
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+    });
+    test('should return a 400 Invalid Request Body if the request body is missing requiredKeys ', () => {
+        const newComment = {
+            author: 'lurker',
+            title: 'CATS!!',
+            body: 'I like cats',
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(400)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should return a 404 User Not Found if the author cannot be found', () => {
+        const newComment = {
+            author: 'banana',
+            title: 'CATS!!',
+            body: 'I like cats',
+            topic: 'cats',
+            article_img_url: "url"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(404)
+        .send(newComment)
+        .then(({body}) => {
+            expect(body.msg).toBe('User Not Found')
+        })
+    });
+    test('should return a 404 Topic Not Found if the topic cannot be found', () => {
+        const newComment = {
+            author: 'lurker',
+            title: 'CATS!!',
+            body: 'I like cats',
+            topic: 'apple',
+            article_img_url: "url"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .expect(404)
+        .send(newComment)
+        .then(({body}) => {
+            console.log(body)
+            expect(body.msg).toBe('Topic Not Found')
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

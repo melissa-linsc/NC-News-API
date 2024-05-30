@@ -3,7 +3,8 @@ const {
     selectArticles,
     selectCommentsByArticleId,
     insertCommentByArticleId,
-    updateArticle
+    updateArticle,
+    insertArticle
     }= require('../models/articles-model')
 
 const getArticleById = (req,res,next) => {
@@ -65,9 +66,39 @@ const patchArticle = (req,res,next) => {
     .catch(next)
 }
 
+const postArticle = (req,res,next) => {
+    const requestBody = req.body
+
+    const newArticle = {}
+
+    newArticle.author = requestBody.author
+    newArticle.title = requestBody.title
+    newArticle.body = requestBody.body
+    newArticle.topic = requestBody.topic
+
+    const defaultImg = "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    if (!requestBody.article_img_url) {
+        newArticle.article_img_url = defaultImg
+    }
+    else {
+        newArticle.article_img_url = requestBody.article_img_url
+    }
+
+    newArticle.votes = 0
+
+    const values = Object.values(newArticle)
+
+    insertArticle([values], requestBody).then((newArticle) => {
+        newArticle.comment_count = 0
+        res.status(200).send({newArticle})
+    })
+    .catch(next)
+}
+
 module.exports = {
     getArticleById, 
     getArticles, 
     getCommentsByArticleId, postCommentsByArticleId,
-    patchArticle
+    patchArticle,
+    postArticle
 }

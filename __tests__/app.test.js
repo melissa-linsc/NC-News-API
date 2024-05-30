@@ -873,8 +873,55 @@ describe('POST /api/articles', () => {
         .expect(404)
         .send(newComment)
         .then(({body}) => {
-            console.log(body)
             expect(body.msg).toBe('Topic Not Found')
+        })
+    });
+});
+
+describe('POST /api/topics', () => {
+    test('should add a new topic to topics and return the added topic', () => {
+        const newTopic = {
+            slug: "topic name here",
+            description: "description here"
+          }
+        return request(app)
+        .post('/api/topics')
+        .expect(200)
+        .send(newTopic)
+        .then(({body}) => {
+            expect(body.newTopic).toEqual({
+                slug: "topic name here",
+                description: "description here"
+            })
+        })
+    });
+    test('should add a new topic to topics and return the added topic if there are extra keys', () => {
+        const newTopic = {
+            slug: "topic name here",
+            description: "description here",
+            extraKey: "extraKey"
+          }
+        return request(app)
+        .post('/api/topics')
+        .expect(200)
+        .send(newTopic)
+        .then(({body}) => {
+            expect(body.newTopic).toEqual({
+                slug: "topic name here",
+                description: "description here"
+            })
+        })
+    });
+    test('should return a 400 Invalid Request Body when required keys are missing', () => {
+        const newTopic = {
+            slug: "topic name here"
+          }
+        return request(app)
+        .post('/api/topics')
+        .expect(400)
+        .send(newTopic)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
         })
     });
 });

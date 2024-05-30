@@ -18,24 +18,6 @@ app.use(express.json())
 
 app.use('/api', apiRouter);
 
-// app.get('/api/topics', getTopics)
-
-// app.get('/api', getEndpoints)
-
-// app.get('/api/articles/:article_id', getArticleById)
-
-// app.get('/api/articles', getArticles)
-
-// app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-
-// app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
-
-// app.patch('/api/articles/:article_id', patchArticle)
-
-// app.delete('/api/comments/:comment_id', deleteComment)
-
-// app.get('/api/users', getUsers)
-
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
       res.status(err.status).send({ msg: err.msg });

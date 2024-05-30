@@ -10,27 +10,31 @@ patchArticle
 const deleteComment = require('./controllers/comments-controller')
 const getUsers = require('./controllers/users-controller')
 
+const apiRouter = require('./routes/api-router');
+
 const app = express()
 
 app.use(express.json())
 
-app.get('/api/topics', getTopics)
+app.use('/api', apiRouter);
 
-app.get('/api', getEndpoints)
+// app.get('/api/topics', getTopics)
 
-app.get('/api/articles/:article_id', getArticleById)
+// app.get('/api', getEndpoints)
 
-app.get('/api/articles', getArticles)
+// app.get('/api/articles/:article_id', getArticleById)
 
-app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
+// app.get('/api/articles', getArticles)
 
-app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
+// app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
-app.patch('/api/articles/:article_id', patchArticle)
+// app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
 
-app.delete('/api/comments/:comment_id', deleteComment)
+// app.patch('/api/articles/:article_id', patchArticle)
 
-app.get('/api/users', getUsers)
+// app.delete('/api/comments/:comment_id', deleteComment)
+
+// app.get('/api/users', getUsers)
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {

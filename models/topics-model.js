@@ -17,4 +17,18 @@ const checkTopicExists = (topic) => {
     })
 }
 
-module.exports = {selectTopics, checkTopicExists}
+const insertTopic = (values, requestBody) => {
+    
+    if (!requestBody.slug || !requestBody.description) {
+        return Promise.reject({status: 400, msg: 'Invalid Request Body'})
+    }
+
+    return db.query(format(`INSERT INTO topics
+    (slug, description)
+    VALUES %L
+    RETURNING *`, values)).then((res) => {
+        return res.rows[0]
+    })
+}
+
+module.exports = {selectTopics, checkTopicExists, insertTopic}

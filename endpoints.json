@@ -156,5 +156,17 @@
       "topic": "cats",
       "article_img_url": "url"
   }
+  },
+  "POST /api/topics": {
+    "description": "adds a new topic and serves the added topic",
+    "queries": [],
+    "exampleResponse": {
+      "slug": "topic name here",
+      "description": "description here"
+  },
+    "requestBody": {
+      "slug": "topic name here",
+      "description": "description here"
+    }
   }
 }

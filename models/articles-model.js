@@ -1,6 +1,6 @@
 const format = require("pg-format");
 const db = require("../db/connection");
-const {checkUserExists} = require('../models/users-model');
+const {selectUserByUsername} = require('../models/users-model');
 const { checkTopicExists } = require('./topics-model')
 
 const selectArticleById = (id) => {
@@ -87,7 +87,7 @@ const insertCommentByArticleId = (id, values, newComment) => {
         return Promise.reject({status:400, msg: 'Invalid Request Body'})
     }
     
-    const articlesAndUsers = [db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]), checkUserExists(newComment.author)]
+    const articlesAndUsers = [db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]), selectUserByUsername(newComment.author)]
 
     return Promise.all(articlesAndUsers)
     .then(([article, users]) => {

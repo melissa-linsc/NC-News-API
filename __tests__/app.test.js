@@ -495,6 +495,29 @@ describe('GET /api/users', () => {
     });
 });
 
+describe('GET /api/users/:username', () => {
+    test('should return a 200 with the user by the username passed', () => {
+        return request(app)
+        .get('/api/users/rogersop')
+        .expect(200)
+        .then(({body})=> {
+            expect(body.user).toMatchObject({
+                username: 'rogersop',
+                name: 'paul',
+                avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+            })
+        })
+    });
+    test('should return a 404 User Not Found if the username cannot be found', () => {
+        return request(app)
+        .get('/api/users/banana')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('User Not Found')
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

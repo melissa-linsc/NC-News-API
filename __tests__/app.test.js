@@ -518,6 +518,99 @@ describe('GET /api/users/:username', () => {
     });
 });
 
+describe('PATCH /api/comments/:comment_id', () => {
+    test('should return a 200 and the updated comment with the increase in votes', () => {
+        const newVotes = { inc_votes: 30 }
+        return request(app)
+        .patch('/api/comments/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedComment).toMatchObject({
+                    body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                    votes: 46,
+                    author: "butter_bridge",
+                    article_id: 9,
+                    created_at: '2020-04-06T11:17:00.000Z',
+            })
+        })
+    });
+    test('should return a 200 with the decrease in votes', () => {
+        const newVotes = { inc_votes: -20 }
+        return request(app)
+        .patch('/api/comments/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedComment).toMatchObject({
+                    body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                    votes: -4,
+                    author: "butter_bridge",
+                    article_id: 9,
+                    created_at: '2020-04-06T11:17:00.000Z',
+            })
+        })
+    });
+    test('should return a 404 Comment Not Found if the comment_id is valid but not found', () => {
+        const newVotes = { inc_votes: 20 }
+        return request(app)
+        .patch('/api/comments/100')
+        .expect(404)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Comment Not Found')
+        })
+    });
+    test('should return a 400 Invalid Input if the comment_id is not valid', () => {
+        const newVotes = { inc_votes: 20 }
+        return request(app)
+        .patch('/api/comments/banana')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+    test('should return a 400 Invalid Request Body if the inc_votes is missing', () => {
+        const newVotes = { votes: 20 }
+        return request(app)
+        .patch('/api/comments/1')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should return a 400 Invalid Request Body if the inc_votes of wrong data type', () => {
+        const newVotes = { inc_votes: 'hello' }
+        return request(app)
+        .patch('/api/comments/1')
+        .expect(400)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should return a 200 and the updated comment if there are extra keys', () => {
+        const newVotes = { inc_votes: -20,
+            extraKey: "extraKey"
+         }
+        return request(app)
+        .patch('/api/comments/1')
+        .expect(200)
+        .send(newVotes)
+        .then(({body}) => {
+            expect(body.updatedComment).toMatchObject({
+                    body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                    votes: -4,
+                    author: "butter_bridge",
+                    article_id: 9,
+                    created_at: '2020-04-06T11:17:00.000Z',
+            })
+        })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

@@ -17,8 +17,10 @@ const getArticleById = (req,res,next) => {
 const getArticles = (req,res,next) => {
 
     const topic = req.query.topic
+    const sortBy = req.query.sort_by
+    const order = req.query.order
 
-    selectArticles(topic).then((articles) => {
+    selectArticles(topic, sortBy, order).then((articles) => {
         res.status(200).send({articles})
     })
     .catch(next)

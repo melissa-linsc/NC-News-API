@@ -145,6 +145,63 @@ describe('GET /api/articles?topic', () => {
     });
 });
 
+describe('GET /api/articles?sort_by', () => {
+    test('should return a 200 and sort by the query passed', () => {
+        return request(app)
+        .get('/api/articles?sort_by=votes')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('votes', {descending: true})
+        })
+    });
+    test('should return a 400 Invalid Query if the sortBy query is not valid', () => {
+        return request(app)
+        .get('/api/articles?sort_by=hello')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Query')
+        })
+    });
+});
+
+describe('GET /api/articles?order', () => {
+    test('should return a 200 and order by asc or desc', () => {
+        return request(app)
+        .get('/api/articles?order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {ascending: true})
+        })
+    });
+    test('should return a 400 Invalid Query if the order query is not valid', () => {
+        return request(app)
+        .get('/api/articles?order=hello')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Query')
+        })
+    });
+});
+
+describe('GET /api/articles?order&sort_by', () => {
+    test('should return a 200 with the correct order and sort_by when passed both queries', () => {
+        return request(app)
+        .get('/api/articles?order=asc&sort_by=title')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('title', {ascending: true})
+        })
+    });
+    test('should return a 400 if either the order or sort by query is not valid', () => {
+        return request(app)
+        .get('/api/articles?order=asc&sort_by=banana')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Query')
+        })
+    });
+});
+
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return an array of comments for a given article id', () => {
         return request(app)

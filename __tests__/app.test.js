@@ -3,8 +3,10 @@ const db = require('../db/connection.js')
 const request = require('supertest')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index.js')
+const endpoints = require('../endpoints.json')
 
-const {app, countEndpoints} = require('../app')
+const {app} = require('../app')
+const apiRouter = require('../routes/api-router.js')
 
 beforeEach(() => seed(testData))
 
@@ -33,7 +35,11 @@ describe('GET /api', () => {
         .get('/api')
         .expect(200)
         .then(({body}) => {
-            expect(Object.values(body.endpoints)).toHaveLength(countEndpoints())
+            const expectedLength = Object.keys(endpoints).length
+            const actualLength = Object.keys(body.endpoints).length
+            
+            expect(actualLength).toBe(expectedLength)
+            
             Object.values(body.endpoints).forEach((endpoint) => {
                 expect(endpoint).toMatchObject({
                     description: expect.any(String),

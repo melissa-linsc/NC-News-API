@@ -31,8 +31,11 @@ const getArticles = (req,res,next) => {
 }
 
 const getCommentsByArticleId = (req,res,next) => {
+    const limit = req.query.limit
     const articleId = req.params.article_id
-    selectCommentsByArticleId(articleId).then((comments) => {
+    const page = req.query.p
+
+    selectCommentsByArticleId(articleId, limit, page).then((comments) => {
         res.status(200).send({comments})
     })
     .catch(next)

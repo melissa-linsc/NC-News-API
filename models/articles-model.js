@@ -76,12 +76,16 @@ const selectArticles = (topic, sortBy = 'created_at', order = 'desc', limit = 10
     })
 }
 
-const selectCommentsByArticleId = (id) => {
+const selectCommentsByArticleId = (id, limit = 10, page = 1) => {
+
+    const offset = (page - 1) * limit
+
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
     .then((article) => {
         if (article.rows.length) {
             return db.query(`SELECT * FROM comments WHERE article_id = $1
-            ORDER BY created_at DESC`, [id]) 
+            ORDER BY created_at DESC
+            LIMIT $2 OFFSET $3`, [id, limit, offset]) 
         }
         else {
             return Promise.reject({status: 404, msg: 'Article Does Not Exist'})

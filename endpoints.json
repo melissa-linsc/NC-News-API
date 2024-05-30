@@ -54,7 +54,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments for the passed article_id",
-    "queries": [],
+    "queries": ["limit", "p"],
     "exampleResponse":{ "articles" : [{
       "comment_id": 18,
       "body": "This morning, I showered for nine minutes.",

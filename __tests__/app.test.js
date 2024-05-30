@@ -283,7 +283,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body.comments).toHaveLength(11)
+            expect(body.comments).toHaveLength(10)
             body.comments.forEach((comment) => {
                 expect(comment).toMatchObject({
                     comment_id: expect.any(Number),
@@ -326,6 +326,71 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.comments).toBeSortedBy('created_at', {descending:true})
+        })
+    });
+});
+
+describe('GET /api/articles/:article_id/comments?limit', () => {
+    test('should return the limit number of comments for an article', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=2')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(2)
+        })
+    });
+    test('should return all comments if the limit is greater than the number of comments', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=30')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(11)
+        })
+    });
+    test('should return 400 Invalid Input if the limit query is invalid', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=banana')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+});
+
+describe('GET /api/articles/:article_id/comments?p', () => {
+    test('should return the correct page of comments for an article', () => {
+        return request(app)
+        .get('/api/articles/1/comments?p=2')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(1)
+        })
+    });
+    test('should return 400 Invalid Input if the page query is invalid', () => {
+        return request(app)
+        .get('/api/articles/1/comments?p=banana')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    });
+    test('should return the correct page of comments for an article with a limit', () => {
+        return request(app)
+        .get('/api/articles/1/comments?p=3&limit=3')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(3)
+            expect(body.comments[0].comment_id).toBe(6)
+            expect(body.comments[1].comment_id).toBe(12)
+            expect(body.comments[2].comment_id).toBe(3)
+        })
+    });
+    test('should return an empty array if the page has no comments', () => {
+        return request(app)
+        .get('/api/articles/1/comments?p=10')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toEqual([])
         })
     });
 });

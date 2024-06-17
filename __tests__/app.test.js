@@ -498,7 +498,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 topic: "mitch",
                 author: "butter_bridge",
                 body: "I find this existence challenging",
-                created_at: "2020-07-09T19:11:00.000Z",
+                created_at: "2020-07-09T20:11:00.000Z",
                 votes: 110,
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -518,7 +518,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 topic: "mitch",
                 author: "butter_bridge",
                 body: "I find this existence challenging",
-                created_at: "2020-07-09T19:11:00.000Z",
+                created_at: "2020-07-09T20:11:00.000Z",
                 votes: 80,
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -568,7 +568,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 topic: "mitch",
                 author: "butter_bridge",
                 body: "I find this existence challenging",
-                created_at: "2020-07-09T19:11:00.000Z",
+                created_at: "2020-07-09T20:11:00.000Z",
                 votes: 130,
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -665,7 +665,7 @@ describe('PATCH /api/comments/:comment_id', () => {
                     votes: 46,
                     author: "butter_bridge",
                     article_id: 9,
-                    created_at: '2020-04-06T11:17:00.000Z',
+                    created_at: '2020-04-06T12:17:00.000Z',
             })
         })
     });
@@ -681,7 +681,7 @@ describe('PATCH /api/comments/:comment_id', () => {
                     votes: -4,
                     author: "butter_bridge",
                     article_id: 9,
-                    created_at: '2020-04-06T11:17:00.000Z',
+                    created_at: '2020-04-06T12:17:00.000Z',
             })
         })
     });
@@ -739,7 +739,7 @@ describe('PATCH /api/comments/:comment_id', () => {
                     votes: -4,
                     author: "butter_bridge",
                     article_id: 9,
-                    created_at: '2020-04-06T11:17:00.000Z',
+                    created_at: '2020-04-06T12:17:00.000Z',
             })
         })
     });

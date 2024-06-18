@@ -50,7 +50,10 @@ const selectArticles = (topic, sortBy = 'created_at', order = 'desc', limit = 10
 
     sqlQuery += ` GROUP BY articles.article_id` 
 
-    if (validSortBys.includes(sortBy) && validOrders.includes(order)) {
+    if (sortBy === 'comment_count') {
+        sqlQuery += ` ORDER BY ${sortBy} ${order}`
+    }
+    else if (validSortBys.includes(sortBy) && validOrders.includes(order)) {
         sqlQuery += ` ORDER BY articles.${sortBy} ${order}` 
     }
     else {

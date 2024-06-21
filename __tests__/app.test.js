@@ -956,6 +956,76 @@ describe('DELETE /api/articles/:article_id', () => {
     });
 });
 
+describe('POST /api/users', () => {
+    test('should add a new user to users and return the added user', () => {
+        const newUser = {
+            username: "new username",
+            name: "new name",
+            avatar_url: "new avatar url"
+          }
+        return request(app)
+        .post('/api/users')
+        .expect(200)
+        .send(newUser)
+        .then(({body}) => {
+            expect(body.newUser).toEqual({
+                username: "new username",
+                name: "new name",
+                avatar_url: "new avatar url"
+              })
+        })
+    });
+    test('should return a 400 Invalid Request Body when required keys are missing', () => {
+        const newUser = {
+            name: "new name",
+            avatar_url: "new avatar url"
+          }
+        return request(app)
+        .post('/api/users')
+        .expect(400)
+        .send(newUser)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Request Body')
+        })
+    });
+    test('should add a new user to users and return the added user if there are extra keys', () => {
+        const newUser = {
+            username: "new username",
+            name: "new name",
+            avatar_url: "new avatar url",
+            extraKey: 'extraKey'
+          }
+        return request(app)
+        .post('/api/users')
+        .expect(200)
+        .send(newUser)
+        .then(({body}) => {
+            expect(body.newUser).toEqual({
+                username: "new username",
+                name: "new name",
+                avatar_url: "new avatar url"
+              })
+        })
+    });
+    test('should return default avatar img if not provided', () => {
+            const newUser = {
+                username: "new username",
+                name: "new name"
+              }
+            return request(app)
+            .post('/api/users')
+            .expect(200)
+            .send(newUser)
+            .then(({body}) => {
+                expect(body.newUser).toEqual({
+                    username: "new username",
+                    name: "new name",
+                    avatar_url: "https://static-00.iconduck.com/assets.00/user-avatar-happy-icon-2048x2048-ssmbv1ou.png"
+                  })
+            })
+    });
+});
+
 describe('All Endpoints', () => {
     test('should return a 404 Not Found if given an invalid route', () => {
         return request(app)

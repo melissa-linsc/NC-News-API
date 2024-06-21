@@ -174,5 +174,21 @@
     "queries": [],
     "exampleResponse": {},
     "requestBody": {}
+  },
+  "POST /api/users": {
+    "description": "adds a new user and serves the added user",
+    "queries": [],
+    "exampleResponse": {
+      "newUser": {
+        "username": "user name here",
+        "name": "description here",
+        "avatar_url": "avatar url here"
+      }
+  },
+    "requestBody": {
+      "username": "user name here",
+      "name": "description here",
+      "avatar_url": "avatar url here"
+    }
   }
 }

@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 const selectUsers = () => {
     return db.query('SELECT * FROM users').then((res) => {
@@ -18,4 +19,21 @@ const selectUserByUsername = (username) => {
     })
 }
 
-module.exports = {selectUsers, selectUserByUsername}
+const insertUsers = (values, requestBody) => {
+
+    const requiredKeys = ['username', 'name']
+    
+    if (!requiredKeys.every(key => Object.keys(requestBody).includes(key))) {
+        return Promise.reject({status: 400, msg: 'Invalid Request Body'})
+    }
+
+    return db.query(format( `INSERT INTO users 
+        (username, name, avatar_url)
+        VALUES %L
+        RETURNING *`, [values]))
+        .then((res) => {
+            return res.rows[0]
+        })
+}
+
+module.exports = {selectUsers, selectUserByUsername, insertUsers}
